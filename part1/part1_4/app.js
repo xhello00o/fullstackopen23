@@ -4,7 +4,7 @@ const Header=(name)=> {
   console.log(name)
   return(
     <h1>
-      {name.name}
+      {name.course}
     </h1>
   )
 }
@@ -16,18 +16,20 @@ const Part = (words)=> {
   )
 }
 const Content = (all) => {
+  var alllist = all.parts 
   return (
     <div>
-      <Part part={all.part_1} exercises={all.exercises_1}/>
-      <Part part={all.part_2} exercises={all.exercises_2}/>
-      <Part part={all.part_3} exercises={all.exercises_3}/>
+      <Part part={alllist[0].name} exercises={alllist[0].exercises}/>
+      <Part part={alllist[1].name} exercises={alllist[1].exercises}/>
+      <Part part={alllist[2].name} exercises={alllist[2].exercises}/>
     </div>
   )
 }
 
 const Total=(num)=>{
-  console.log(num)
-  var totalnum = num.ex1 + num.ex2 + num.ex3
+  console.log(num.parts)
+  var numlist=num.parts
+  var totalnum = numlist[0].exercises + numlist[1].exercises + numlist[2].exercises
 
   return (
     <p>
@@ -57,12 +59,10 @@ const App = () => {
 
   return (
     <div>
-      <Header name={course}/>
-      <Content part_1={parts[0].name} exercises_1={parts[0].exercises} part_2={parts[1].name} exercises_2 ={parts[1].exercises} part_3={parts[2].name} exercises_3={parts[2].exercises} />
-      
-      <Total ex1 = {parts[0].exercises} ex2={parts[1].exercises} ex3={parts[2].exercises}/>
-    </div>
-  )
+      <Header course={course} />
+      <Content parts={parts} />
+      <Total parts={parts} />
+    </div> )
 }
 
 
