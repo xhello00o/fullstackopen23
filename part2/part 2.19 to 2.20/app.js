@@ -71,101 +71,117 @@ const Filter = ({input,filterchange}) => {
   
 
 function App() {
-  const [Countries,SetCountries] = useState([])
-  const [newFilter, setNewFilter] =useState('')
-  const [newWeather, setNewWeather] = useState(null)
+  const [Countries, SetCountries] = useState([]);
+  const [newFilter, setNewFilter] = useState("");
+  const [newWeather, setNewWeather] = useState(null);
 
-  const API_KEY = '28b78bfb6e33c023d50bfd853ded627f'
-  console.log("API",API_KEY)
+  const API_KEY = "28b78bfb6e33c023d50bfd853ded627f";
+  console.log("API", API_KEY);
 
-  useEffect( ()=> {
-    console.log('first effect rendered')
-    axios.get('https://studies.cs.helsinki.fi/restcountries/api/all')
-  .then(response => {
-    const countries = response.data 
-    SetCountries (countries)
-    console.log('data loaded')
-  })
+  useEffect(() => {
+    console.log("first effect rendered");
+    axios
+      .get("https://studies.cs.helsinki.fi/restcountries/api/all")
+      .then((response) => {
+        const countries = response.data;
+        SetCountries(countries);
+        console.log("data loaded");
+      });
+  }, []);
 
-  },[])
+  const handlefilterchange = (event) => {
+    setNewFilter(event.target.value);
+  };
 
-  const handlefilterchange =(event) => {
-    setNewFilter(event.target.value)
-  }
-    
-    let filteredCountries = [];
-    const copyofnewfilter = newFilter.trim().toLowerCase();
-    if (newFilter.trim() === "") {
-      filteredCountries = [];
+  let filteredCountries = [];
+  const copyofnewfilter = newFilter.trim().toLowerCase();
+  if (newFilter.trim() === "") {
+    filteredCountries = [];
+  } else {
+    const fullmatch = Countries.find(
+      (country) => country.name.common.trim().toLowerCase() === copyofnewfilter
+    );
+    console.log(fullmatch);
+    if (fullmatch) {
+      filteredCountries.push(fullmatch);
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${fullmatch.latlng[0]}&lon=${fullmatch.latlng[1]}&appid=${API_KEY}&units=metric`;
+      console.log("url", url);
+
+      if (newWeather === null) {
+        axios.get(url).then((response) => {
+          console.log("Weather API call");
+          const weather = response.data;
+          console.log("weather", weather.sys.country);
+          console.log("test", fullmatch.cca2);
+
+          setNewWeather(weather);
+          console.log("weather loaded");
+        });
+      } else if (newWeather.sys.country !== fullmatch.cca2) {
+        axios.get(url).then((response) => {
+          console.log("Weather API call");
+          const weather = response.data;
+          console.log("weather", weather.sys.country);
+          console.log("test", fullmatch.cca2);
+
+          setNewWeather(weather);
+          console.log("weather loaded");
+        });
+      }
     } else {
-      const fullmatch = Countries.find(
-        (country) =>
-          country.name.common.trim().toLowerCase() === copyofnewfilter
-      );
-      console.log(fullmatch);
-      if (fullmatch) {
-        filteredCountries.push(fullmatch);
-        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${fullmatch.latlng[0]}&lon=${fullmatch.latlng[1]}&appid=${API_KEY}&units=metric`;
-        console.log("url", url);
-      
-
-        if ((newWeather=== null)){
-          axios.get(url).then((response) => {
-            console.log('Weather API call')
-            const weather = response.data;
-            console.log("weather", weather.sys.country);
-            console.log("test",fullmatch.cca2)
-            
-            setNewWeather(weather)
-            console.log("weather loaded");
-          });
-        }else if((newWeather.sys.country!== fullmatch.cca2)) {
-          axios.get(url).then((response) => {
-            console.log('Weather API call')
-            const weather = response.data;
-            console.log("weather", weather.sys.country);
-            console.log("test",fullmatch.cca2)
-            
-            setNewWeather(weather)
-            console.log("weather loaded");
-          });
-
-        }
-
-
-
-        
-      } else {
-        for (let country of Countries) {
-          if (
-            country.name.common.trim().toLowerCase().includes(copyofnewfilter)
-          ) {
-            filteredCountries.push(country);
-          }
+      for (let country of Countries) {
+        if (
+          country.name.common.trim().toLowerCase().includes(copyofnewfilter)
+        ) {
+          filteredCountries.push(country);
         }
       }
-    }
+      console.log("filtered", filteredCountries);
+      if (filteredCountries.length === 1) {
+        if (newWeather === null) {
+          const url = `https://api.openweathermap.org/data/2.5/weather?lat=${filteredCountries[0].latlng[0]}&lon=${filteredCountries[0].latlng[1]}&appid=${API_KEY}&units=metric`;
+          axios.get(url).then((response) => {
+            console.log("Weather API call");
+            const weather = response.data;
+            console.log("weather", weather.sys.country);
+            console.log("test", filteredCountries[0].cca2);
 
-  
-  console.log('filtered',filteredCountries)
+            setNewWeather(weather);
+            console.log("weather loaded");
+          });
+        } else if (newWeather.sys.country !== filteredCountries[0].cca2) {
+          const url = `https://api.openweathermap.org/data/2.5/weather?lat=${filteredCountries[0].latlng[0]}&lon=${filteredCountries[0].latlng[1]}&appid=${API_KEY}&units=metric`;
+          axios.get(url).then((response) => {
+            console.log("Weather API call");
+            const weather = response.data;
+            console.log("weather", weather.sys.country);
+            console.log("test", filteredCountries[0].cca2);
 
-  const ShowView =(name) => {
-    console.log(name)
-    setNewFilter(name)
+            setNewWeather(weather);
+            console.log("weather loaded");
+          });
+        }
+      }
+    }}
+
+    
+
+    const ShowView = (name) => {
+      console.log(name);
+      setNewFilter(name);
+    };
+
+    return (
+      <div>
+        <Filter input={newFilter} filterchange={handlefilterchange} />
+        <ListCountries
+          countries={filteredCountries}
+          setShow={ShowView}
+          weather={newWeather}
+        />
+      </div>
+    );
   }
-  
-  
 
-  
-
-
-  
-  return (
-    <div >
-      <Filter input={newFilter} filterchange={handlefilterchange}/>
-      <ListCountries countries={filteredCountries} setShow={ShowView} weather={newWeather}/>      
-    </div>
-  );
-}
 
 export default App;
