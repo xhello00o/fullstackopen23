@@ -93,7 +93,7 @@ const App = () => {
   
   const addnewname =(event)=> {
     event.preventDefault()
-    console.log(newName +" "+ newNumber )
+    console.log("new" + newName +" "+ newNumber )
     const repeatedname = persons.find(person => person.name === newName);
     const repeatednum = persons.find(person => person.number === newNumber)
     
@@ -106,13 +106,15 @@ const App = () => {
           name: newName,
           number:newNumber,
          }
+         let updatepersonindex = persons.indexOf(repeatedname)
         let updatedpersons = persons.filter(person => person!==repeatedname)
+        
         BEservice.update(repeatedname.id,nameobj)
         .then(updatednum => {
           
-          console.log(updatednum.id-1)
+          console.log(updatednum)
           console.log(updatedpersons)
-          updatedpersons.splice((updatednum.id-1),0,updatednum)
+          updatedpersons.splice(updatepersonindex,0,updatednum)
           console.log(updatedpersons)
 
           
@@ -121,6 +123,7 @@ const App = () => {
           setErrorEffect(true)
           setTimeout(()=> setErrorMessage(null),5000)
         }).catch(error => {
+          console.log("err:",error)
           console.log(error.response.statusText)
           if (error.response.statusText === 'Not Found') {
             updatedpersons = persons.filter(person => person!==repeatedname)
@@ -144,6 +147,7 @@ const App = () => {
         name: newName,
         number:newNumber,
        }
+       console.log("nameobj:",nameobj)
        BEservice.create(nameobj)
        .then(newnum => {
         console.log(newnum)
