@@ -134,7 +134,15 @@ const App = () => {
             setTimeout(()=> setErrorMessage(null),5000)
 
             
+          }else {
+            setErrorMessage(error.response.statusText)
+            setErrorEffect(false)
+            setTimeout(()=> setErrorMessage(null),5000)
           }
+            
+            
+          
+
         })
 
       }
@@ -157,6 +165,11 @@ const App = () => {
         setErrorMessage(`Added ${newName}`)
         setErrorEffect(true)
         setTimeout(()=> setErrorMessage(null),5000)
+      }).catch(error => {
+        console.log("Error:", error)
+        setErrorMessage(error.response.statusText)
+        setErrorEffect(false)
+        setTimeout(()=>setErrorMessage(null),5000)
       })
         
     }
