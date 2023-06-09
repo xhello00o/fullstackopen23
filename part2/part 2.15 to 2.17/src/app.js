@@ -124,8 +124,8 @@ const App = () => {
           setTimeout(()=> setErrorMessage(null),5000)
         }).catch(error => {
           console.log("err:",error)
-          console.log(error.response.statusText)
-          if (error.response.statusText === 'Not Found') {
+          console.log(error.response.data.error.error)
+          if (error.response.data.error.error === 'Not Found') {
             updatedpersons = persons.filter(person => person!==repeatedname)
             
             setPersons(updatedpersons)
@@ -135,7 +135,7 @@ const App = () => {
 
             
           }else {
-            setErrorMessage(error.response.statusText)
+            setErrorMessage(error.response.data.error)
             setErrorEffect(false)
             setTimeout(()=> setErrorMessage(null),5000)
           }
@@ -167,7 +167,7 @@ const App = () => {
         setTimeout(()=> setErrorMessage(null),5000)
       }).catch(error => {
         console.log("Error:", error)
-        setErrorMessage(error.response.statusText)
+        setErrorMessage(error.response.data.error)
         setErrorEffect(false)
         setTimeout(()=>setErrorMessage(null),5000)
       })
